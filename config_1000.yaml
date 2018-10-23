@@ -1,4 +1,4 @@
-population: 100
+population: 1000
 
 labels:
     age:
@@ -8,23 +8,23 @@ labels:
         transmission:
             type: bins
             bins: [0, 10, 100]
-            multiplier: [[1.0, 0.0], [0.0, 1.0]]
+            multiplier: [[1.0, 0.001], [0.001, 1.0]]
 
     location:
         distribution: choice
         selection: ["loc_1", "loc_2"]
-        p: [1.0, 0.0]
+        p: [0.5, 0.5]
         transmission:
             type: list
             list: ["loc_1", "loc_2"]
-            multiplier: [[1.0, 0.0], [0.0, 1.0]]
+            multiplier: [[1.0, 0.002], [0.002, 1.0]]
 
 infection:
-    infectivity: 0.02
+    infectivity: 0.01
     duration_infection:
         distribution: poisson
-        mean: 3
-    initial_prevalence: 0.01
+        mean: 2
+    initial_prevalence: 0.001
 
 simulation:
     total_time: 30
@@ -49,5 +49,5 @@ reports:
 
 logging:
     default: info
-    simulation: debug
+    simulation: info
     #    individual: debug

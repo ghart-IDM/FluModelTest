@@ -4,6 +4,7 @@ import numpy as np
 import csv, json
 import datetime
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import seaborn as sns
 import networkx as nx
 
@@ -24,8 +25,9 @@ class Report:
         self.write_infection_network(self.configs["reports"]["output_directory"] + "/infection.csv")
 
     def write_plots(self):
+        self.plot_infection(self.configs["reports"]["plots"]["output_directory"])
         self.plot_infection_network(self.configs["reports"]["plots"]["output_directory"] + "/infection_network.pdf")
-#        self.plot_infection_label(self.configs["reports"]["plots"]["output_directory"] + "/infection_label.pdf")
+
 
     def report_infection(self,t):
         self.new_infections[t] = self.sim.number_new_infections
@@ -77,15 +79,43 @@ class Report:
                 for from_id, to_id in networks:
                     w.writerow([sim_time, from_id, to_id])
 
+    def plot_infection(self, output_file_dir):
+
+        total_plots = len(self.infection_label_counts)
+        idx_label = 0
+
+        for label_name in self.infection_label_counts:
+            plt.figure(figsize=(8,6))
+            plt.title(label_name)
+            plt.xlabel("time")
+            for bin_name in self.infection_label_counts[label_name]:
+                plt.plot(xrange(len(self.infection_label_counts[label_name][bin_name])), self.infection_label_counts[label_name][bin_name], label=bin_name)
+                plt.legend()
+            plt.savefig(output_file_dir+"infection_"+label_name+".pdf")
+
     def plot_infection_network(self, output_file_name):
+        #set figure size depending on node size
+        figure_size = (12,10)
+        if self.configs["population"] > 100 and self.configs["population"] < 1000:
+            figure_size = (24,20)
+        elif self.configs["population"] >= 1000:
+            figure_size = (36,30)
+        plt.figure(figsize = figure_size)
         G = nx.DiGraph()
+        edge_colors = []
         for sim_time,  networks in self.infection_networks.items():
             for from_id, to_id in networks:
                 G.add_edge(from_id, to_id)
+                edge_colors.append(sim_time)
 
         pos = nx.layout.spring_layout(G)
         nodes = nx.draw_networkx_nodes(G, pos, node_color='yellow')
-        edges = nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=10, width=2)
+        edges = nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=10,edge_color=edge_colors,edge_cmap=plt.cm.Blues_r, width=2, alpha=0.3)
+
+        pc = mpl.collections.PatchCollection(edges, cmap=plt.cm.Blues_r)
+        pc.set_array(edge_colors)
+        plt.colorbar(pc)
+
         nx.draw_networkx_labels(G, pos, font_size=10, font_family='sans-serif')
         plt.axis('off')
-        plt.show()
+        plt.savefig(output_file_name)

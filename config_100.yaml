@@ -8,22 +8,22 @@ labels:
         transmission:
             type: bins
             bins: [0, 10, 100]
-            multiplier: [[1.0, 0.0], [0.0, 1.0]]
+            multiplier: [[1.0, 0.01], [0.01, 1.0]]
 
     location:
         distribution: choice
         selection: ["loc_1", "loc_2"]
-        p: [1.0, 0.0]
+        p: [0.5, 0.5]
         transmission:
             type: list
             list: ["loc_1", "loc_2"]
-            multiplier: [[1.0, 0.0], [0.0, 1.0]]
+            multiplier: [[1.0, 0.01], [0.01, 1.0]]
 
 infection:
-    infectivity: 0.02
+    infectivity: 0.05
     duration_infection:
         distribution: poisson
-        mean: 3
+        mean: 2
     initial_prevalence: 0.01
 
 simulation:
@@ -49,5 +49,5 @@ reports:
 
 logging:
     default: info
-    simulation: debug
+    simulation: info
     #    individual: debug

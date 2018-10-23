@@ -97,7 +97,8 @@ class Simulation:
         positions = np.random.randint(self.pop_infection.shape[0], size=num_infect)
         self.pop_infection[positions]=1
         for idx in xrange(num_infect):
-            self.pop_infection_counter[positions[idx]] = get_value_from_distribution(self.infection_params["duration_infection"])
+            ran_duration = get_value_from_distribution(self.infection_params["duration_infection"])
+            self.pop_infection_counter[positions[idx]] = ran_duration + 1
         log.debug("pop_infection_counter:\n{0}".format(self.pop_infection_counter))
         log.debug("pop_infection:{0}".format(self.pop_infection))
 
@@ -134,7 +135,8 @@ class Simulation:
 
         for idx in xrange(len(new_infection_idx)):
             if new_infection_idx[idx] == True:
-                self.pop_infection_counter[idx] = get_value_from_distribution(self.infection_params["duration_infection"])
+                ran_duration = get_value_from_distribution(self.infection_params["duration_infection"])
+                self.pop_infection_counter[idx] = ran_duration + 1
 
         self.pop_infection = new_infection
         log.debug("pop_infection matrix after transmission:\n{0}".format(self.pop_infection))
