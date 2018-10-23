@@ -105,16 +105,13 @@ class Report:
         edge_colors = []
         for sim_time,  networks in self.infection_networks.items():
             for from_id, to_id in networks:
-                G.add_edge(from_id, to_id)
-                edge_colors.append(sim_time)
+                G.add_edge(from_id, to_id, weight=sim_time)
+        edges,weights = zip(*nx.get_edge_attributes(G,'weight').items())
 
-        pos = nx.layout.spring_layout(G)
-        nodes = nx.draw_networkx_nodes(G, pos, node_color='yellow')
-        edges = nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=10,edge_color=edge_colors,edge_cmap=plt.cm.Blues_r, width=2, alpha=0.3)
-
-        pc = mpl.collections.PatchCollection(edges, cmap=plt.cm.Blues_r)
-        pc.set_array(edge_colors)
-        plt.colorbar(pc)
+        pos = nx.layout.spring_layout(G, k=1)
+        #nodes = nx.draw_networkx_nodes(G, pos, node_color='yellow')
+        #edges = nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=10,edge_color=weights,edge_cmap=plt.cm.Blues, width=2, alpha=0.3)
+        nx.draw(G, pos, node_color='yellow', edgelist=edges, edge_color=weights, arrowstyle='->',arrowsize=10, width=2, edge_cmap=plt.cm.Blues, alpha=0.3)
 
         nx.draw_networkx_labels(G, pos, font_size=10, font_family='sans-serif')
         plt.axis('off')
