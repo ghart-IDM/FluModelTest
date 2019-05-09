@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+from builtins import range
 import yaml
 import argparse, textwrap
 import os
@@ -15,7 +17,7 @@ Flu Prototype
 =============================
 ''')
 
-print intro_text
+print(intro_text)
 
 parser = argparse.ArgumentParser(
         prog='flu_prototype',
@@ -84,7 +86,7 @@ def main():
 
     seeding_time = configs["simulation"]["seeding_time"]
 
-    for t in xrange(configs["simulation"]["total_time"]):
+    for t in range(configs["simulation"]["total_time"]):
 
         if t in seeding_time:
             sim.seed()

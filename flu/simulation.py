@@ -1,3 +1,7 @@
+from __future__ import print_function
+from builtins import str
+from builtins import range
+from builtins import object
 import logging
 log = logging.getLogger(__name__)
 import numpy as np
@@ -5,11 +9,11 @@ import numpy.random as ran
 import math, copy
 import os
 from itertools import repeat
-from distribution import get_value_from_distribution
+from .distribution import get_value_from_distribution
 
-np.set_printoptions(threshold=np.nan)
+np.set_printoptions(threshold=np.inf)
 
-class Simulation:
+class Simulation(object):
 
     def __init__(self, configs):
         #read configs
@@ -40,7 +44,8 @@ class Simulation:
         self.number_new_infections = 0
         self.infection_network = []
 
-
+        #seed random number generator
+        ran.seed(1)
 
     # @profile
     def populate(self):
@@ -48,7 +53,7 @@ class Simulation:
         log.debug("populate: create {0} individuals.".format(number))
 
         #generate labels for every individual
-        for i in xrange(number):
+        for i in range(number):
             lookup_table = {}
             log.debug("population id {0}:".format(i))
             for label_name in self.labels:
@@ -62,8 +67,8 @@ class Simulation:
             self.pop_labels.append(lookup_table)
 
         #generate population transmission matrix pop_matrix based on set up values
-        for i in xrange(number):
-            for j in xrange(number):
+        for i in range(number):
+            for j in range(number):
                 if i == j:
                     self.pop_matrix[i,j] = 1
                 else:
@@ -84,7 +89,7 @@ class Simulation:
                             idx_j = transmission["list"].index(self.pop_labels[j][label_name])
                             self.pop_matrix[i, j] *= transmission["multiplier"][idx_i][idx_j]
                         else:
-                            print "error: unknown transmission type."
+                            print("error: unknown transmission type.")
                             exit(1)
 
         log.debug("pop_matrix is:\n{0}".format(self.pop_matrix))
@@ -96,7 +101,7 @@ class Simulation:
         log.info("seeding {0} infections.".format(num_infect))
         positions = np.random.randint(self.pop_infection.shape[0], size=num_infect)
         self.pop_infection[positions]=1
-        for idx in xrange(num_infect):
+        for idx in range(num_infect):
             ran_duration = get_value_from_distribution(self.infection_params["duration_infection"])
             self.pop_infection_counter[positions[idx]] = ran_duration + 1
         log.debug("pop_infection_counter:\n{0}".format(self.pop_infection_counter))
@@ -126,14 +131,14 @@ class Simulation:
         self.number_new_infections = np.sum(new_infection)
 
         #record infection network
-        for i in xrange(self.total_pop):
-            for j in xrange(self.total_pop):
+        for i in range(self.total_pop):
+            for j in range(self.total_pop):
                 if i != j and self.pop_infection[j] != 1 and self.pop_exclude[j] != True:
                     if random_matrix_t[i][j] == 1:
                         #transmit from i to j
                         self.infection_network.append((i,j))
 
-        for idx in xrange(len(new_infection_idx)):
+        for idx in range(len(new_infection_idx)):
             if new_infection_idx[idx] == True:
                 ran_duration = get_value_from_distribution(self.infection_params["duration_infection"])
                 self.pop_infection_counter[idx] = ran_duration + 1

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import logging
 log = logging.getLogger(__name__)
 import numpy as np
@@ -30,6 +31,6 @@ def get_value_from_distribution(params):
 
 
     else:
-        print "error: unknown distribution."
+        print("error: unknown distribution.")
         exit(1)
     return result
