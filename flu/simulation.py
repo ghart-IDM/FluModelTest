@@ -45,7 +45,8 @@ class Simulation(object):
         self.infection_network = []
 
         #seed random number generator
-        ran.seed(1)
+        if "random_seed" in configs:
+            ran.seed(configs["random_seed"])
 
     # @profile
     def populate(self):
@@ -119,14 +120,16 @@ class Simulation(object):
 
         #step 1: find new infections based on interaction matrix
         #generate a random binomial matrix based on probabilities
-        log.debug("pop_infection:{0}".format(self.pop_infection))
+        #log.debug("pop_infection:{0}".format(self.pop_infection))
         random_matrix_t = np.copy(self.pop_matrix)
         random_matrix_t[self.pop_infection > 0] = np.random.binomial(1,self.pop_matrix[self.pop_infection > 0])
         log.debug("transmission matrix after ran number:\n{0}".format(random_matrix_t))
         new_infection = np.dot(self.pop_infection, random_matrix_t)
+        log.debug("new_infection matrix after dot:\n{0}".format(new_infection))
         new_infection[new_infection > 1]=1
         new_infection = new_infection * (1 - self.pop_exclude)
         new_infection_idx = ( new_infection - self.pop_infection ) > 0
+        log.debug("new_infection_idx matrix:\n{0}".format(new_infection_idx))
 
         self.number_new_infections = np.sum(new_infection)
 

@@ -1,5 +1,7 @@
 population: 100
 
+random_seed: 1
+
 labels:
     age:
         distribution: binned_uniform
